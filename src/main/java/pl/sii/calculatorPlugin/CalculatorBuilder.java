@@ -8,20 +8,31 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 public class CalculatorBuilder extends Builder implements SimpleBuildStep {
+    private final String parameterName;
+
+    @DataBoundConstructor
+    public CalculatorBuilder(String parameterName) {
+        this.parameterName = parameterName;
+    }
+
+    public String getParameterName() {
+        return parameterName;
+    }
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
         taskListener.getLogger().println("Calculation results:");
+        //TODO 
     }
 
     @Override
