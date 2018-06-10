@@ -1,6 +1,14 @@
 package pl.sii.calculatorPlugin;
 
+import java.io.IOException;
+import java.util.regex.Pattern;
+
+import hudson.AbortException;
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
 import hudson.model.ParameterValue;
+import hudson.tasks.BuildWrapper;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class CalculatorParameterValue extends ParameterValue {
@@ -48,5 +56,19 @@ public class CalculatorParameterValue extends ParameterValue {
         return "(CalculatorParameterValue) " + this.getName() + ": First: " + this.first + " Second: " + this.second;
     }
 
-    //TODO createBuildWrapper
+    @Override
+    public BuildWrapper createBuildWrapper(AbstractBuild<?, ?> build) {
+        Pattern pattern = Pattern.compile("\\d*");
+        if (!pattern.matcher(first).matches() || !pattern.matcher(second).matches()) {
+            // abort the build within BuildWrapper
+            return new BuildWrapper() {
+                @Override
+                public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+                    throw new AbortException("Invalid value type! Vale must be integer");
+                }
+            };
+        } else {
+            return null;
+        }
+    }
 }

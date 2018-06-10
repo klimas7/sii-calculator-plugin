@@ -2,12 +2,15 @@ package pl.sii.calculatorPlugin;
 
 
 import java.io.IOException;
+import java.math.BigInteger;
 import javax.annotation.Nonnull;
 
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.ParametersAction;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -30,9 +33,46 @@ public class CalculatorBuilder extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
-        taskListener.getLogger().println("Calculation results:");
-        //TODO 
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+
+        NumericalSystem numericalSystem = getDescriptor().getNumericalSystem();
+        CalculatorParameterValue calculatorParameterValue = (CalculatorParameterValue) run.getAction(ParametersAction.class).getParameter(parameterName);
+        if (calculatorParameterValue == null) {
+            listener.fatalError("Bad parameter name: " + parameterName);
+            run.setResult(Result.FAILURE);
+            return;
+        }
+        BigInteger first = new BigInteger(calculatorParameterValue.getFirst());
+        BigInteger second = new BigInteger(calculatorParameterValue.getSecond());
+        Operation operation = calculatorParameterValue.getOperation();
+
+        String answer = "nan";
+        if (operation != Operation.DIV || second.intValue() != 0) {
+            answer = calculate(first, second, operation, numericalSystem);
+        }
+
+        listener.getLogger().println("Numerical system is: " + numericalSystem);
+        listener.getLogger().println("Calculation result:");
+        listener.getLogger().println(first + " " + operation.getSymbol() + " " + second + " = " + answer);
+    }
+
+    private String calculate(BigInteger first, BigInteger second, Operation operation, NumericalSystem numericalSystem) {
+        BigInteger answer = null;
+        switch (operation) {
+            case ADD:
+                answer = first.add(second);
+                break;
+            case SUB:
+                answer = first.subtract(second);
+                break;
+            case MUL:
+                answer = first.multiply(second);
+                break;
+            case DIV:
+                answer = first.divide(second);
+        }
+
+        return answer.toString(numericalSystem.getBase());
     }
 
     @Override
