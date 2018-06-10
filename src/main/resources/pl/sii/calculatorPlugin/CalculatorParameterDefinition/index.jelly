@@ -6,11 +6,11 @@
 
         <f:entry title="First">
             <f:textbox name="${it.name}_first" default="0"
-                       checkUrl="'${it.rootUrl}/descriptor/pl.klimas7.calculatorPlugin.CalculatorParameterDefinition/validate?value='+encodeURIComponent(this.value)"/>
+                       checkUrl="'${it.rootUrl}/descriptor/pl.sii.calculatorPlugin.CalculatorParameterDefinition/validate?value='+encodeURIComponent(this.value)"/>
         </f:entry>
         <f:entry title="Second">
             <f:textbox name="${it.name}_second" default="0"
-                       checkUrl="'${it.rootUrl}/descriptor/pl.klimas7.calculatorPlugin.CalculatorParameterDefinition/validate?value='+encodeURIComponent(this.value)"/>
+                       checkUrl="'${it.rootUrl}/descriptor/pl.sii.calculatorPlugin.CalculatorParameterDefinition/validate?value='+encodeURIComponent(this.value)"/>
         </f:entry>
 
         <f:entry title="Operation">
